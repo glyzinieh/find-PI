@@ -1,1 +1,1 @@
-from .main import FindPIFunc
+from .models import Comparer, Condition
