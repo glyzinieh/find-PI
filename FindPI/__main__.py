@@ -1,17 +1,36 @@
 import math
 
-from . import conditions
-from .evaluate import Comparer
+from tqdm import tqdm
 
-DIGITS = 10
-THRESHOLD = 1e-10
+from . import conditions, funcs
+from .evaluate import Comparer, HLine, Runner
+
+# 条件
+DIGITS = 5
+THRESHOLD = 1e-5
 CONDITION = conditions.DigitsAndDistance(digits=DIGITS, threshold=THRESHOLD)
-TIMES = 5
 
-findPI = Comparer(CONDITION, TIMES, hline=math.pi, hline_name="π")
+
+class FindPIRunner(Runner):
+    def __init__(self, name: str, params: dict):
+        super().__init__(name, params, CONDITION)
+
 
 if __name__ == "__main__":
-    from . import funcs
+    # 試行回数
+    TIMES = 3
 
-    findPI.evaluate()
-    findPI.plot()
+    # 関数
+    FUNCS = [
+        funcs.incribed,
+        funcs.outcribed,
+        funcs.montecarlo,
+        funcs.leibniz,
+        funcs.chudnovsky,
+        funcs.quadrature,
+        funcs.dichotomy,
+    ]
+
+    findPI = Comparer(TIMES, FUNCS, HLine(math.pi, "π"))
+    findPI.run()
+    findPI.plot(type="time-value")
