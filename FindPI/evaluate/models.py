@@ -1,4 +1,5 @@
 import time
+from decimal import Decimal
 from functools import wraps
 from typing import Callable
 
@@ -34,7 +35,7 @@ class Runner:
         self.name = name
         self.params = params
         self.condition = condition
-        self.true_value = true_value
+        self.true_value = Decimal(true_value)
 
         self.results: list[ResultContainer] = list()
 
