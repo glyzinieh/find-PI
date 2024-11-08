@@ -31,8 +31,7 @@ if __name__ == "__main__":
     findPI.run()
 
     # プロット
-    X_TYPE = "index"
-    Y_TYPE = "value"
-    HLINE = HLine(math.pi, "math.pi")
+    # HLINE = HLine(math.pi, "math.pi")
+    HLINE = None
 
-    findPI.plot(X_TYPE, Y_TYPE, "index", "value", HLINE)
+    findPI.plot("index", "memory", "index", "memory", HLINE)
