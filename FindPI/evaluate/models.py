@@ -72,11 +72,9 @@ class HLine:
 
 
 class Comparer:
-    def __init__(self, times: int, funcs: list[Callable] = list(), hline: HLine = None):
+    def __init__(self, times: int, funcs: list[Callable] = list()):
         self.times = times
         self.funcs = funcs
-        self.hline_value = hline.value if hline else None
-        self.hline_name = hline.name if hline else None
         self.evaluated = False
 
     def run(self):
@@ -85,26 +83,12 @@ class Comparer:
                 func()
         self.evaluated = True
 
-    def plot(self, type="index-value"):
+    def plot(
+        self, x_type: str, y_type: str, x_label: str, y_label: str, hline: HLine = None
+    ):
         from . import plot
 
-        if self.hline_value is None:
-            raise ValueError("HLine value is not set")
-
-        match type:
-            case "index-value":
-                plot.plot_value(
-                    self.funcs,
-                    "試行回数",
-                    "値",
-                    HLine(self.hline_value, self.hline_name),
-                    type,
-                )
-            case "time-value":
-                plot.plot_value(
-                    self.funcs,
-                    "時間",
-                    "値",
-                    HLine(self.hline_value, self.hline_name),
-                    type,
-                )
+        if len(self.funcs) == 1:
+            plot.plot_one_graph(self.funcs[0], x_type, y_type, x_label, y_label, hline)
+        else:
+            plot.plot_graphs(self.funcs, x_type, y_type, x_label, y_label, hline)

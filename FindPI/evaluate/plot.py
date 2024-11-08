@@ -9,56 +9,110 @@ from .models import HLine, Runner
 matplotlib_fontja.japanize()
 
 
-def plot_value(
-    funcs: list[Callable],
+def plot_one_graph(
+    func: Callable,
+    x_type: str,
+    y_type: str,
     x_label: str,
     y_label: str,
     hline: HLine,
-    type: str = "index-value",
+    mode: str = "w",
 ):
-    funcs_length = len(funcs)
-    axes_length = funcs_length
+    fig, ax = plt.subplots()
 
-    fig, axes = plt.subplots(axes_length, 1, figsize=(10, 5 * axes_length), sharex=True)
+    if hline is not None:
+        ax.axhline(hline.value, color="red", linestyle="--", label=hline.name)
+
+    runner: Runner = func.__closure__[1].cell_contents
+    time = runner.results[-1].time_list[-1]
+
+    match x_type:
+        case "index":
+            x_list = runner.results[-1].index_list
+        case "time":
+            x_list = runner.results[-1].time_list
+
+    match y_type:
+        case "value":
+            y_list = runner.results[-1].value_list
+
+    ax.set_title(f"{runner.name}({len(x_list)}回/{time:.2e}秒)")
+
+    ax.set_xlabel(x_label)
+    ax.set_xscale("log")
+
+    ax.set_ylabel(y_label)
+
+    ax.plot(x_list, y_list)
+
+    plt.tight_layout()
+
+    match mode:
+        case "w":
+            plt.savefig(f"output/{x_label}_{y_label}_{runner.name}.png")
+            plt.close()
+        case "s":
+            plt.show()
+
+
+def plot_graphs(
+    funcs: list[Callable],
+    x_type: str,
+    y_type: str,
+    x_label: str,
+    y_label: str,
+    hline: HLine,
+    mode: str = "w",
+):
+    fig, axes = plt.subplots(len(funcs), 1, figsize=(10, 5 * len(funcs)), sharex=True)
 
     for i, func in enumerate(funcs):
+        ax: plt.Axes = axes[i]
+
         if hline is not None:
-            axes[i].axhline(hline.value, color="red", linestyle="--", label=hline.name)
+            ax.axhline(hline.value, color="red", linestyle="--", label=hline.name)
 
         runner: Runner = func.__closure__[1].cell_contents
         time = runner.results[-1].time_list[-1]
 
-        match type:
-            case "index-value":
+        match x_type:
+            case "index":
                 x_list = runner.results[-1].index_list
-                y_list = runner.results[-1].value_list
-            case "time-value":
+            case "time":
                 x_list = runner.results[-1].time_list
+
+        match y_type:
+            case "value":
                 y_list = runner.results[-1].value_list
 
-        axes[i].set_title(f"{runner.name}({len(x_list)}回/{time:.2e}秒)")
+        ax.set_title(f"{runner.name}({len(x_list)}回/{time:.2e}秒)")
 
-        axes[i].set_xlabel(x_label)
-        axes[i].set_xscale("log")
-        axes[i].xaxis.set_tick_params(which="both", labelbottom=True)
+        ax.set_xlabel(x_label)
+        ax.set_xscale("log")
+        ax.xaxis.set_tick_params(which="both", labelbottom=True)
 
-        axes[i].set_ylabel(y_label)
+        ax.set_ylabel(y_label)
 
-        axes[i].plot(x_list, y_list)
+        ax.plot(x_list, y_list)
 
     plt.tight_layout()
-    filename = f"output/{x_label}_{y_label}_{{}}.png"
-    plt.savefig(filename.format("all"))
 
-    im = Image.open(filename.format("all"))
-    im_dpi = im.info["dpi"]
+    match mode:
+        case "w":
+            plt.savefig(f"output/{x_label}_{y_label}_all.png")
+            plt.close()
 
-    for i, func in enumerate(funcs):
-        runner: Runner = func.__closure__[1].cell_contents
-        name = runner.name
+            im = Image.open(f"output/{x_label}_{y_label}_all.png")
+            im_dpi = im.info["dpi"]
 
-        top = 5 * i
-        bottom = 5 * (i + 1)
-        im.crop((0, top * im_dpi[1], im.width, bottom * im_dpi[1])).save(
-            filename.format(name)
-        )
+            for i, func in enumerate(funcs):
+                runner: Runner = func.__closure__[1].cell_contents
+                name = runner.name
+
+                top = 5 * i
+                bottom = 5 * (i + 1)
+                im.crop((0, top * im_dpi[1], im.width, bottom * im_dpi[1])).save(
+                    f"output/{x_label}_{y_label}_{name}.png"
+                )
+        case "s":
+            plt.show()
