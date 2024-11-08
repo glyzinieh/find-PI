@@ -18,7 +18,7 @@ def plot_one_graph(
     hline: HLine,
     mode: str = "w",
 ):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 5))
 
     if hline is not None:
         ax.axhline(hline.value, color="red", linestyle="--", label=hline.name)
@@ -31,10 +31,20 @@ def plot_one_graph(
             x_list = runner.results[-1].index_list
         case "time":
             x_list = runner.results[-1].time_list
+        case "value":
+            x_list = runner.results[-1].value_list
+        case "diff":
+            x_list = runner.results[-1].diff_list
 
     match y_type:
+        case "index":
+            y_list = runner.results[-1].index_list
+        case "time":
+            y_list = runner.results[-1].time_list
         case "value":
             y_list = runner.results[-1].value_list
+        case "diff":
+            y_list = runner.results[-1].diff_list
 
     ax.set_title(f"{runner.name}({len(x_list)}回/{time:.2e}秒)")
 
@@ -80,10 +90,20 @@ def plot_graphs(
                 x_list = runner.results[-1].index_list
             case "time":
                 x_list = runner.results[-1].time_list
+            case "value":
+                x_list = runner.results[-1].value_list
+            case "diff":
+                x_list = runner.results[-1].diff_list
 
         match y_type:
+            case "index":
+                y_list = runner.results[-1].index_list
+            case "time":
+                y_list = runner.results[-1].time_list
             case "value":
                 y_list = runner.results[-1].value_list
+            case "diff":
+                y_list = runner.results[-1].diff_list
 
         ax.set_title(f"{runner.name}({len(x_list)}回/{time:.2e}秒)")
 

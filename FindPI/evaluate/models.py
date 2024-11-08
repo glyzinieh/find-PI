@@ -15,18 +15,26 @@ class Condition:
 
 class ResultContainer:
     def __init__(
-        self, index_list: list[int], value_list: list[float], time_list: list[float]
+        self,
+        index_list: list[int],
+        value_list: list[float],
+        time_list: list[float],
+        diff_list: list[float],
     ):
         self.index_list = index_list
         self.value_list = value_list
         self.time_list = time_list
+        self.diff_list = diff_list
 
 
 class Runner:
-    def __init__(self, name: str, params: dict, condition):
+    def __init__(
+        self, name: str, params: dict, condition: Condition, true_value: float
+    ):
         self.name = name
         self.params = params
         self.condition = condition
+        self.true_value = true_value
 
         self.results: list[ResultContainer] = list()
 
@@ -37,6 +45,7 @@ class Runner:
             index_list = list()
             value_list = list()
             time_list = list()
+            diff_list = list()
 
             current_time = 0
             params = self.params
@@ -48,9 +57,10 @@ class Runner:
                 index_list.append(index)
                 value_list.append(value)
                 time_list.append(current_time)
+                diff_list.append(abs(value - self.true_value))
                 index += 1
 
-            self.results.append(ResultContainer(index_list, value_list, time_list))
+            self.results.append(ResultContainer(index_list, value_list, time_list, diff_list))
 
         return wrapper
 
@@ -84,11 +94,11 @@ class Comparer:
         self.evaluated = True
 
     def plot(
-        self, x_type: str, y_type: str, x_label: str, y_label: str, hline: HLine = None
+        self, x_type: str, y_type: str, x_label: str, y_label: str, hline: HLine = None, mode: str = "w"
     ):
         from . import plot
 
         if len(self.funcs) == 1:
-            plot.plot_one_graph(self.funcs[0], x_type, y_type, x_label, y_label, hline)
+            plot.plot_one_graph(self.funcs[0], x_type, y_type, x_label, y_label, hline, mode)
         else:
-            plot.plot_graphs(self.funcs, x_type, y_type, x_label, y_label, hline)
+            plot.plot_graphs(self.funcs, x_type, y_type, x_label, y_label, hline, mode)
