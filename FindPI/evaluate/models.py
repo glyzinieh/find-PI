@@ -1,8 +1,8 @@
 import time
-from decimal import Decimal
 from functools import wraps
 from typing import Callable
 
+import gmpy2
 from tqdm import tqdm
 
 
@@ -35,7 +35,7 @@ class Runner:
         self.name = name
         self.params = params
         self.condition = condition
-        self.true_value = Decimal(true_value)
+        self.true_value = gmpy2.mpfr(true_value)
 
         self.results: list[ResultContainer] = list()
 
@@ -61,7 +61,9 @@ class Runner:
                 diff_list.append(abs(value - self.true_value))
                 index += 1
 
-            self.results.append(ResultContainer(index_list, value_list, time_list, diff_list))
+            self.results.append(
+                ResultContainer(index_list, value_list, time_list, diff_list)
+            )
 
         return wrapper
 
@@ -95,11 +97,19 @@ class Comparer:
         self.evaluated = True
 
     def plot(
-        self, x_type: str, y_type: str, x_label: str, y_label: str, hline: HLine = None, mode: str = "w"
+        self,
+        x_type: str,
+        y_type: str,
+        x_label: str,
+        y_label: str,
+        hline: HLine = None,
+        mode: str = "w",
     ):
         from . import plot
 
         if len(self.funcs) == 1:
-            plot.plot_one_graph(self.funcs[0], x_type, y_type, x_label, y_label, hline, mode)
+            plot.plot_one_graph(
+                self.funcs[0], x_type, y_type, x_label, y_label, hline, mode
+            )
         else:
             plot.plot_graphs(self.funcs, x_type, y_type, x_label, y_label, hline, mode)

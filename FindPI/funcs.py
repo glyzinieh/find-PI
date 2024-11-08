@@ -1,17 +1,16 @@
 import math
 import random
-from decimal import Decimal, getcontext
-from math import factorial, sqrt
+from math import factorial
+
+import gmpy2
 
 from .__main__ import FindPIRunner
 from .math_funcs import cos, sin, tan
 
-getcontext().prec = 1 + 1000 + 10  # 整数部 + 小数部 + 余分
-
 
 @FindPIRunner("内接多角形", {"n": 3})
 def incribed(n):
-    value = Decimal(n) / 2 * Decimal(sqrt(2 - 2 * cos(Decimal(360) / n)))
+    value = gmpy2.mpfr(n) / 2 * gmpy2.mpfr(gmpy2.sqrt(2 - 2 * cos(gmpy2.mpfr(360) / n)))
     n += 1
 
     return value, {"n": n}
@@ -19,7 +18,7 @@ def incribed(n):
 
 @FindPIRunner("外接多角形", {"n": 3})
 def outcribed(n):
-    value = Decimal(n) * Decimal(tan(Decimal(180) / n))
+    value = gmpy2.mpfr(n) * gmpy2.mpfr(tan(gmpy2.mpfr(180) / n))
     n += 1
 
     return value, {"n": n}
@@ -27,19 +26,19 @@ def outcribed(n):
 
 @FindPIRunner("モンテカルロ法", {"n": 0, "in_circle": 0})
 def montecarlo(n, in_circle):
-    x = Decimal(random.random())
-    y = Decimal(random.random())
+    x = gmpy2.mpfr(random.random())
+    y = gmpy2.mpfr(random.random())
     if x**2 + y**2 <= 1:
         in_circle += 1
     n += 1
-    value = 4 * Decimal(in_circle) / n
+    value = 4 * gmpy2.mpfr(in_circle) / n
 
     return value, {"n": n, "in_circle": in_circle}
 
 
 @FindPIRunner("ライプニッツ級数", {"n": 0, "s": 0})
 def leibniz(n, s):
-    s += Decimal((-1) ** n) / (2 * n + 1)
+    s += gmpy2.mpfr((-1) ** n) / (2 * n + 1)
     value = s * 4
     n += 1
 
@@ -49,11 +48,11 @@ def leibniz(n, s):
 @FindPIRunner("チュドノフスキーの公式", {"n": 0, "s": 0})
 def chudnovsky(n, s):
     s += (
-        (Decimal((-1) ** n) * Decimal(factorial(6 * n)))
-        / (Decimal(factorial(3 * n)) * (Decimal(factorial(n)) ** 3))
+        (gmpy2.mpfr((-1) ** n) * gmpy2.mpfr(factorial(6 * n)))
+        / (gmpy2.mpfr(factorial(3 * n)) * (gmpy2.mpfr(factorial(n)) ** 3))
     ) * (
-        Decimal(13591409 + 545140134 * n)
-        / (Decimal(640320) ** (3 * n + Decimal(3) / 2))
+        gmpy2.mpfr(13591409 + 545140134 * n)
+        / (gmpy2.mpfr(640320) ** (3 * n + gmpy2.mpfr(3) / 2))
     )
     value = 1 / (12 * s)
     n += 1
@@ -63,11 +62,11 @@ def chudnovsky(n, s):
 
 @FindPIRunner("区分求積法", {"n": 1})
 def quadrature(n):
-    s = Decimal(0)
-    dx = Decimal(1) / n
-    x = Decimal(1) / n / 2
+    s = gmpy2.mpfr(0)
+    dx = gmpy2.mpfr(1) / n
+    x = gmpy2.mpfr(1) / n / 2
     for _ in range(n):
-        y = Decimal(sqrt(1 - x**2))
+        y = gmpy2.mpfr(gmpy2.sqrt(1 - x**2))
         s += dx * y
         x += dx
     value = s * 4
@@ -78,10 +77,10 @@ def quadrature(n):
 
 @FindPIRunner("二分法", {"x_1": 0, "x_2": 3})
 def dichotomy(x_1, x_2):
-    x_1 = Decimal(x_1)
-    x_2 = Decimal(x_2)
+    x_1 = gmpy2.mpfr(x_1)
+    x_2 = gmpy2.mpfr(x_2)
     wj = (x_1 + x_2) / 2
-    if Decimal(math.tan(wj)) < 1:
+    if gmpy2.mpfr(math.tan(wj)) < 1:
         x_1 = wj
     else:
         x_2 = wj
