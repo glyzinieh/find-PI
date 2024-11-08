@@ -1,7 +1,5 @@
 import math
 
-from tqdm import tqdm
-
 from . import conditions, funcs
 from .evaluate import Comparer, HLine, Runner
 
@@ -17,9 +15,6 @@ class FindPIRunner(Runner):
 
 
 if __name__ == "__main__":
-    # 試行回数
-    TIMES = 3
-
     # 関数
     FUNCS = [
         funcs.incribed,
@@ -31,6 +26,13 @@ if __name__ == "__main__":
         funcs.dichotomy,
     ]
 
-    findPI = Comparer(TIMES, FUNCS, HLine(math.pi, "π"))
+    # 実行
+    findPI = Comparer(1, FUNCS)
     findPI.run()
-    findPI.plot(type="time-value")
+
+    # プロット
+    X_TYPE = "index"
+    Y_TYPE = "value"
+    HLINE = HLine(math.pi, "math.pi")
+
+    findPI.plot(X_TYPE, Y_TYPE, "index", "value", HLINE)
