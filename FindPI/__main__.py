@@ -6,7 +6,8 @@ from .evaluate import Comparer, HLine, Runner
 # 条件
 DIGITS = 5
 THRESHOLD = 1e-5
-CONDITION = conditions.DigitsAndDistance(digits=DIGITS, threshold=THRESHOLD)
+CONDITION = conditions.Times(times=10000)
+# CONDITION = conditions.DigitsAndDistance(digits=DIGITS, threshold=THRESHOLD)
 
 
 class FindPIRunner(Runner):
@@ -21,7 +22,7 @@ if __name__ == "__main__":
         funcs.outcribed,
         funcs.montecarlo,
         funcs.leibniz,
-        funcs.chudnovsky,
+        # funcs.chudnovsky,
         funcs.quadrature,
         funcs.dichotomy,
     ]

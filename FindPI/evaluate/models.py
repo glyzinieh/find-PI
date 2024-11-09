@@ -59,7 +59,7 @@ class Runner:
                 index_list.append(index)
                 value_list.append(value)
                 time_list.append(current_time)
-                memory_list.append(current)
+                memory_list.append(peak)
                 index += 1
 
             self.results.append(
