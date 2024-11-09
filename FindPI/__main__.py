@@ -7,8 +7,8 @@ from .evaluate import Comparer, HLine, Runner
 DIGITS = 5
 THRESHOLD = 1e-5
 # CONDITION = conditions.Times(times=200000)
-# CONDITION = conditions.Times(times=10000)
-CONDITION = conditions.DigitsAndDistance(digits=DIGITS, threshold=THRESHOLD)
+CONDITION = conditions.Times(times=10000)
+# CONDITION = conditions.DigitsAndDistance(digits=DIGITS, threshold=THRESHOLD)
 
 
 class FindPIRunner(Runner):
@@ -23,7 +23,7 @@ if __name__ == "__main__":
         funcs.outcribed,
         funcs.montecarlo,
         funcs.leibniz,
-        funcs.chudnovsky,
+        # funcs.chudnovsky,
         funcs.quadrature,
         funcs.dichotomy,
     ]
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     findPI.run()
 
     # プロット
-    HLINE = HLine(0, "0")
     # HLINE = HLine(math.pi, "math.pi")
+    HLINE = None
 
-    findPI.plot("time", "index", "time", "index", HLINE)
+    findPI.plot("index", "memory", "index", "memory", HLINE)

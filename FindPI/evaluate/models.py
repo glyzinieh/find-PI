@@ -1,4 +1,5 @@
 import time
+import tracemalloc
 from functools import wraps
 from typing import Callable
 
@@ -21,11 +22,13 @@ class ResultContainer:
         value_list: list[float],
         time_list: list[float],
         diff_list: list[float],
+        memory_list: list[int],
     ):
         self.index_list = index_list
         self.value_list = value_list
         self.time_list = time_list
         self.diff_list = diff_list
+        self.memory_list = memory_list
 
 
 class Runner:
@@ -47,22 +50,27 @@ class Runner:
             value_list = list()
             time_list = list()
             diff_list = list()
+            memory_list = list()
 
             current_time = 0
             params = self.params
 
             while not self.condition(index_list, value_list):
+                tracemalloc.start()
                 start_time = time.perf_counter()
                 value, params = func(**params)
                 current_time += time.perf_counter() - start_time
+                current, peak = tracemalloc.get_traced_memory()
+                tracemalloc.stop()
+                tracemalloc.clear_traces()
                 index_list.append(index)
                 value_list.append(value)
                 time_list.append(current_time)
                 diff_list.append(abs(value - self.true_value))
+                memory_list.append(peak)
                 index += 1
-
             self.results.append(
-                ResultContainer(index_list, value_list, time_list, diff_list)
+                ResultContainer(index_list, value_list, time_list, diff_list, memory_list)
             )
 
         return wrapper

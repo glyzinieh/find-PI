@@ -45,6 +45,8 @@ def plot_one_graph(
             y_list = runner.results[-1].value_list
         case "diff":
             y_list = runner.results[-1].diff_list
+        case "memory":
+            y_list = runner.results[-1].memory_list
 
     ax.set_title(f"{runner.name}({len(x_list)}回/{time:.2e}秒)")
 
@@ -104,6 +106,8 @@ def plot_graphs(
                 y_list = runner.results[-1].value_list
             case "diff":
                 y_list = runner.results[-1].diff_list
+            case "memory":
+                y_list = runner.results[-1].memory_list
 
         ax.set_title(f"{runner.name}({len(x_list)}回/{time:.2e}秒)")
 
