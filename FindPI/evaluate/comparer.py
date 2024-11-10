@@ -1,36 +1,33 @@
+import os
 from typing import Callable
 
 from tqdm import tqdm
 
-from . import HLine
+from .runner import Runner
 
 
 class Comparer:
-    def __init__(self, times: int, funcs: list[Callable] = list()):
-        self.times = times
-        self.funcs = funcs
+    def __init__(self, condition: Callable):
+        self.condition = condition
+
+        self.funcs: list[Runner] = list()
+
         self.evaluated = False
+
+    def func(self, name: str, init_params: dict):
+        def decorator(func: Callable):
+            self.funcs.append(Runner(func, name, init_params, self.condition))
+            return func
+
+        return decorator
 
     def run(self):
         for func in tqdm(self.funcs):
-            for _ in tqdm(range(self.times), leave=False):
-                func()
+            func()
         self.evaluated = True
 
-    def plot(
-        self,
-        x_type: str,
-        y_type: str,
-        x_label: str,
-        y_label: str,
-        hline: HLine = None,
-        mode: str = "w",
-    ):
-        from .. import plot
-
-        if len(self.funcs) == 1:
-            plot.plot_one_graph(
-                self.funcs[0], x_type, y_type, x_label, y_label, hline, mode
-            )
-        else:
-            plot.plot_graphs(self.funcs, x_type, y_type, x_label, y_label, hline, mode)
+    def save(self, path: str):
+        if not self.evaluated:
+            raise ValueError("You need to run before saving.")
+        for func in self.funcs:
+            func.save(os.path.join(path, f"{func.name}.pkl"))

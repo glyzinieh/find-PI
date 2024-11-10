@@ -1,57 +1,42 @@
 import time
-from functools import wraps
 from typing import Callable
 
-import gmpy2
-
-from . import Condition, ResultContainer
+from .condition import Condition
+from .container import ResultContainer
 
 
 class Runner:
     def __init__(
-        self, name: str, params: dict, condition: Condition, true_value: float
+        self, func: Callable, name: str, init_params: dict, condition: Condition
     ):
+        self.func = func
         self.name = name
-        self.params = params
+        self.init_params = init_params
         self.condition = condition
-        self.true_value = gmpy2.mpfr(true_value)
 
-        self.results: list[ResultContainer] = list()
+        self.result: ResultContainer = None
 
-    def __call__(self, func: Callable):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            index = 1
-            index_list = list()
-            value_list = list()
-            time_list = list()
-            diff_list = list()
+    def __call__(self):
+        index_list = list()
+        time_list = list()
+        value_list = list()
 
-            current_time = 0
-            params = self.params
+        index = 1
+        current_time = 0
+        params = self.init_params
 
-            while not self.condition(index_list, value_list):
-                start_time = time.perf_counter()
-                value, params = func(**params)
-                current_time += time.perf_counter() - start_time
-                index_list.append(index)
-                value_list.append(value)
-                time_list.append(current_time)
-                diff_list.append(abs(value - self.true_value))
-                index += 1
+        while not self.condition(index_list, time_list, value_list):
+            start_time = time.perf_counter()
+            value, params = self.func(**params)
+            current_time += time.perf_counter() - start_time
+            index_list.append(index)
+            time_list.append(current_time)
+            value_list.append(value)
+            index += 1
 
-            self.results.append(
-                ResultContainer(index_list, value_list, time_list, diff_list)
-            )
+        self.result = ResultContainer(self.name, index_list, time_list, value_list)
 
-        return wrapper
-
-    def average_time(self):
-        return sum([result.time_list[-1] for result in self.results]) / len(
-            self.results
-        )
-
-    def average_count(self):
-        return sum([result.index_list[-1] for result in self.results]) / len(
-            self.results
-        )
+    def save(self, path: str):
+        if self.result is None:
+            raise ValueError("You need to run before saving.")
+        self.result.save(path)
