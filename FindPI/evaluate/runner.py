@@ -3,29 +3,8 @@ from functools import wraps
 from typing import Callable
 
 import gmpy2
-from tqdm import tqdm
 
-
-class Condition:
-    def __init__(self, **settings):
-        self.settings = settings
-
-    def __call__(self, index: list[int], value: list[float]) -> bool:
-        raise NotImplementedError
-
-
-class ResultContainer:
-    def __init__(
-        self,
-        index_list: list[int],
-        value_list: list[float],
-        time_list: list[float],
-        diff_list: list[float],
-    ):
-        self.index_list = index_list
-        self.value_list = value_list
-        self.time_list = time_list
-        self.diff_list = diff_list
+from . import Condition, ResultContainer
 
 
 class Runner:
@@ -76,40 +55,3 @@ class Runner:
         return sum([result.index_list[-1] for result in self.results]) / len(
             self.results
         )
-
-
-class HLine:
-    def __init__(self, value: float, name: str):
-        self.value = value
-        self.name = name
-
-
-class Comparer:
-    def __init__(self, times: int, funcs: list[Callable] = list()):
-        self.times = times
-        self.funcs = funcs
-        self.evaluated = False
-
-    def run(self):
-        for func in tqdm(self.funcs):
-            for _ in tqdm(range(self.times), leave=False):
-                func()
-        self.evaluated = True
-
-    def plot(
-        self,
-        x_type: str,
-        y_type: str,
-        x_label: str,
-        y_label: str,
-        hline: HLine = None,
-        mode: str = "w",
-    ):
-        from . import plot
-
-        if len(self.funcs) == 1:
-            plot.plot_one_graph(
-                self.funcs[0], x_type, y_type, x_label, y_label, hline, mode
-            )
-        else:
-            plot.plot_graphs(self.funcs, x_type, y_type, x_label, y_label, hline, mode)
