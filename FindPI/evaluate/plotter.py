@@ -89,7 +89,8 @@ class Plotter:
             else:
                 right_ax.plot(x_list, right_y_list)
 
-        plt.tight_layout()
+        fig.tight_layout()
+        return fig
 
     def _plot_graphs(self):
         settings = self.plot_settings
