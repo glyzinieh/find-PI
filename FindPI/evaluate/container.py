@@ -1,8 +1,9 @@
 import pickle
 import struct
 
-from gmpy2 import log10, mpfr
-
+# gmpy2のインポートを削除
+# from gmpy2 import log10, mpfr
+import math
 
 class ResultContainer:
     def __init__(
@@ -10,7 +11,7 @@ class ResultContainer:
         name: str,
         index_list: list[int] = None,
         time_list: list[float] = None,
-        value_list: list[mpfr] = None,
+        value_list: list[float] = None,
         path: str = None,
     ):
         self.name = name
@@ -21,7 +22,7 @@ class ResultContainer:
             self.time_list = time_list
             self.value_list = value_list
 
-    def set_target(self, target: mpfr):
+    def set_target(self, target: float):
         self.target = target
 
     @property
@@ -31,7 +32,7 @@ class ResultContainer:
     @property
     def digit_list(self):
         return [
-            int(-log10(diff)) if diff != 0 else float("inf") for diff in self.diff_list
+            int(-math.log10(diff)) if diff != 0 else None for diff in self.diff_list
         ]
 
     def save(self, path: str):
