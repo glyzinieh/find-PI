@@ -138,26 +138,27 @@ class Plotter:
                 else:
                     right_ax.plot(x_list, right_y_list)
 
-        plt.tight_layout()
+        fig.tight_layout()
+        return fig
 
     def plot(self):
         if not self.results:
             raise ValueError("You need to add results before plotting.")
         if len(self.results) == 1:
-            self._plot_one_graph()
+            self.fig = self._plot_one_graph()
         else:
-            self._plot_graphs()
+            self.fig = self._plot_graphs()
 
     def save(self, path: str):
         if not self.results:
             raise ValueError("You need to plot before saving.")
-        plt.savefig(
+
+        self.fig.savefig(
             os.path.join(
                 path,
                 f"{self.plot_settings.x_axis.label}_{self.plot_settings.y_axis.label}_all.png",
             )
         )
-        plt.close()
 
         im = Image.open(
             os.path.join(
