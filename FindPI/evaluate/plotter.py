@@ -25,12 +25,13 @@ class HLine:
 
 class PlotSettings:
     def __init__(
-        self, x_axis: Axis, y_axis: Axis, right_y_axis: Axis = None, hline: HLine = None
+        self, x_axis: Axis, y_axis: Axis, right_y_axis: Axis = None, hline: HLine = None, marker: bool = False
     ):
         self.x_axis = x_axis
         self.y_axis = y_axis
         self.right_y_axis = right_y_axis
         self.hline = hline
+        self.marker = marker
 
 
 class Plotter:
@@ -72,7 +73,10 @@ class Plotter:
         if settings.y_axis.scale:
             ax.set_yscale(settings.y_axis.scale)
 
-        ax.plot(x_list, y_list)
+        if settings.marker:
+            ax.plot(x_list, y_list, marker="o")
+        else:
+            ax.plot(x_list, y_list)
 
         if settings.right_y_axis is not None:
             right_ax = ax.twinx()
@@ -80,7 +84,10 @@ class Plotter:
             right_ax.set_ylabel(settings.right_y_axis.label)
             if settings.right_y_axis.scale:
                 right_ax.set_yscale(settings.right_y_axis.scale)
-            right_ax.plot(x_list, right_y_list)
+            if settings.marker:
+                right_ax.plot(x_list, right_y_list, marker="o")
+            else:
+                right_ax.plot(x_list, right_y_list)
 
         plt.tight_layout()
 
@@ -115,7 +122,10 @@ class Plotter:
             if settings.y_axis.scale:
                 ax.set_yscale(settings.y_axis.scale)
 
-            ax.plot(x_list, y_list)
+            if settings.marker:
+                ax.plot(x_list, y_list, marker="o")
+            else:
+                ax.plot(x_list, y_list)
 
             if settings.right_y_axis is not None:
                 right_ax = ax.twinx()
@@ -123,7 +133,10 @@ class Plotter:
                 right_ax.set_ylabel(settings.right_y_axis.label)
                 if settings.right_y_axis.scale:
                     right_ax.set_yscale(settings.right_y_axis.scale)
-                right_ax.plot(x_list, right_y_list)
+                if settings.marker:
+                    right_ax.plot(x_list, right_y_list, marker="o")
+                else:
+                    right_ax.plot(x_list, right_y_list)
 
         plt.tight_layout()
 
