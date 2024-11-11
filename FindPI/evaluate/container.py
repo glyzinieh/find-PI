@@ -1,9 +1,7 @@
 import pickle
 import struct
 
-# gmpy2のインポートを削除
-# from gmpy2 import log10, mpfr
-import math
+from mpmath import log10
 
 class ResultContainer:
     def __init__(
@@ -32,7 +30,7 @@ class ResultContainer:
     @property
     def digit_list(self):
         return [
-            int(-math.log10(diff)) if diff != 0 else None for diff in self.diff_list
+            int(-log10(diff)) if diff != 0 else None for diff in self.diff_list
         ]
 
     def save(self, path: str):
