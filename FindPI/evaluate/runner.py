@@ -2,7 +2,7 @@ import time
 from typing import Callable
 
 from .condition import Condition
-from .container import ResultContainer
+from .container import ResultContainer2
 
 
 class Runner:
@@ -14,27 +14,23 @@ class Runner:
         self.init_params = init_params
         self.condition = condition
 
-        self.result: ResultContainer = None
+        self.result: ResultContainer2 = None
 
     def __call__(self):
-        index_list = list()
-        time_list = list()
-        value_list = list()
+        result: list[tuple[int, float, float]] = list()
 
         index = 1
         current_time = 0
         params = self.init_params
 
-        while not self.condition(index_list, time_list, value_list):
+        while not self.condition(result):
             start_time = time.perf_counter()
             value, params = self.func(**params)
             current_time += time.perf_counter() - start_time
-            index_list.append(index)
-            time_list.append(current_time)
-            value_list.append(value)
+            result.append((index, current_time, value))
             index += 1
 
-        self.result = ResultContainer(self.name, index_list, time_list, value_list)
+        self.result = ResultContainer2(self.name, result)
 
     def save(self, path: str):
         if self.result is None:

@@ -30,4 +30,4 @@ class Comparer:
         if not self.evaluated:
             raise ValueError("You need to run before saving.")
         for func in self.funcs:
-            func.save(os.path.join(path, f"{func.name}.pkl"))
+            func.save(os.path.join(path, f"{func.name}.pkl2"))
