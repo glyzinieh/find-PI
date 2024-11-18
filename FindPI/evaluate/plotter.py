@@ -63,8 +63,8 @@ class Plotter:
                 label=settings.hline.name,
             )
 
-        x_list = result.get_column(settings.x_axis.label)
-        y_list = result.get_column(settings.y_axis.label)
+        x_list = result.get_column(settings.x_axis.type)
+        y_list = result.get_column(settings.y_axis.type)
 
         ax.set_xlabel(settings.x_axis.label)
         if settings.x_axis.scale:
@@ -81,7 +81,7 @@ class Plotter:
 
         if settings.right_y_axis is not None:
             right_ax = ax.twinx()
-            right_y_list = result.get_column(settings.right_y_axis.label)
+            right_y_list = result.get_column(settings.right_y_axis.type)
             right_ax.set_ylabel(settings.right_y_axis.label)
             if settings.right_y_axis.scale:
                 right_ax.set_yscale(settings.right_y_axis.scale)
@@ -115,8 +115,8 @@ class Plotter:
 
             time = result.df["time"].iloc[-1]
 
-            x_list = result.get_column(settings.x_axis.label)
-            y_list = result.get_column(settings.y_axis.label)
+            x_list = result.get_column(settings.x_axis.type)
+            y_list = result.get_column(settings.y_axis.type)
 
             ax.set_title(f"{result.name}({len(x_list)}回/{time:.2e}秒)")
             ax.xaxis.set_tick_params(which="both", labelbottom=True)
@@ -136,7 +136,7 @@ class Plotter:
 
             if settings.right_y_axis is not None:
                 right_ax = ax.twinx()
-                right_y_list = result.get_column(settings.right_y_axis.label)
+                right_y_list = result.get_column(settings.right_y_axis.type)
                 right_ax.set_ylabel(settings.right_y_axis.label)
                 if settings.right_y_axis.scale:
                     right_ax.set_yscale(settings.right_y_axis.scale)
